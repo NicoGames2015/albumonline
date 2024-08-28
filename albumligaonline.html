@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Álbum La Liga 24-25</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .team-selection, .number-selection {
+            margin-bottom: 10px;
+        }
+
+        .album {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cromo {
+            width: 100px;
+            height: 150px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .cromo.missing {
+            background-color: #e0e0e0;
+        }
+
+        .cromo.collected {
+            background-color: #b3ffb3;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        select {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Álbum La Liga 24-25</h1>
+
+    <div class="controls">
+        <div class="team-selection">
+            <label for="team">Elige un equipo:</label>
+            <select id="team">
+                <option value="Deportivo Alavés">Deportivo Alavés</option>
+                <option value="Athletic Club Bilbao">Athletic Club Bilbao</option>
+                <option value="Atlético de Madrid">Atlético de Madrid</option>
+                <option value="FC Barcelona">FC Barcelona</option>
+                <option value="Real Betis">Real Betis</option>
+                <option value="RC Celta">RC Celta</option>
+                <option value="RCD Espanyol">RCD Espanyol</option>
+                <option value="Getafe CF">Getafe CF</option>
+                <option value="Girona FC">Girona FC</option>
+                <option value="UD Las Palmas">UD Las Palmas</option>
+                <option value="CD Leganés">CD Leganés</option>
+                <option value="Real Madrid">Real Madrid</option>
+                <option value="RCD Mallorca">RCD Mallorca</option>
+                <option value="CA Osasuna">CA Osasuna</option>
+                <option value="Rayo Vallecano">Rayo Vallecano</option>
+                <option value="Real Sociedad">Real Sociedad</option>
+                <option value="Sevilla FC">Sevilla FC</option>
+                <option value="Valencia CF">Valencia CF</option>
+                <option value="R. Valladolid CF">R. Valladolid CF</option>
+                <option value="Villarreal CF">Villarreal CF</option>
+            </select>
+        </div>
+
+        <div class="number-selection">
+            <label for="number">Elige el número del cromo:</label>
+            <select id="number">
+                <script>
+                    for (let i = 1; i <= 20; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+
+        <button onclick="addCromo()">Añadir Cromo</button>
+        <button onclick="removeCromo()">Eliminar Cromo</button>
+        <button onclick="showAlbum()">Mostrar Álbum</button>
+    </div>
+
+    <div id="album" class="album"></div>
+
+    <script>
+        const album = JSON.parse(localStorage.getItem('album')) || {};
+
+        function saveAlbum() {
+            localStorage.setItem('album', JSON.stringify(album));
+        }
+
+        function addCromo() {
+            const team = document.getElementById("team").value;
+            const number = document.getElementById("number").value;
+
+            if (!album[team]) {
+                album[team] = new Array(20).fill(false);
+            }
+            album[team][number - 1] = true;
+            saveAlbum();
+            alert(`Cromo añadido: ${team} - Nº ${number}`);
+        }
+
+        function removeCromo() {
+            const team = document.getElementById("team").value;
+            const number = document.getElementById("number").value;
+
+            if (album[team]) {
+                album[team][number - 1] = false;
+                saveAlbum();
+                alert(`Cromo eliminado: ${team} - Nº ${number}`);
+            }
+        }
+
+        function showAlbum() {
+            const albumDiv = document.getElementById("album");
+            albumDiv.innerHTML = "";
+
+            for (const team in album) {
+                for (let i = 0; i < album[team].length; i++) {
+                    const cromoDiv = document.createElement("div");
+                    cromoDiv.className = "cromo " + (album[team][i] ? "collected" : "missing");
+                    cromoDiv.textContent = `${team} - Nº ${i + 1}`;
+                    albumDiv.appendChild(cromoDiv);
+                }
+            }
+        }
+
+        // Mostrar álbum al cargar la página
+        document.addEventListener('DOMContentLoaded', showAlbum);
+    </script>
+
+</body>
+</html>
